@@ -83,6 +83,7 @@ if(BUILD_ROOT)
 	include_directories(${ROOT_INCLUDE_DIRS})
 	add_executable(rootNEST ${PROJECT_SOURCE_DIR}/Tools/rootNEST.cpp)
 	target_link_libraries(rootNEST NEST_core ${ROOT_LIBRARIES})
+	target_link_libraries(testNEST_core ${ROOT_LIBRARIES})
 	install(TARGETS NEST testNEST bareNEST rootNEST
 		# IMPORTANT: Add the library to the "export-set"
 		EXPORT NESTTargets
