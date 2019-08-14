@@ -29,9 +29,12 @@ int main(int argc, char** argv) {
   // Custom parameter modification functions
   // detector->ExampleFunction();
 
-  if (argc < 7) {
-    cout << "This program takes 6 (or 7) inputs, with Z position in mm from "
+  if (argc < 8) {
+    cout << "This program takes 7 (or 8) inputs, with Z position in mm from "
             "bottom of detector:" << endl;
+    cout << "\t./testNEST numEvts type_interaction(Kr83m) E[keV](9.4_or_32.1) E[keV](9.4_or_32.1) "
+            "field_drift[V/cm] x,y,z-position[mm](-1 for random position) output_root_file" << endl
+         << endl;
     cout << "\t./testNEST numEvts type_interaction E_min[keV] E_max[keV] "
             "field_drift[V/cm] x,y,z-position[mm] {optional:seed}" << endl
          << endl;
@@ -57,23 +60,25 @@ int main(int argc, char** argv) {
   string position = argv[6];
   string posiMuon = argv[4];
   double fPos = atof(argv[6]);
+  string output_root_file = argv[7];
+
 
   int seed;
   bool no_seed;
-  if (argc == 8) {
-    seed = atoi(argv[7]);
+  if (argc == 9) {
+    seed = atoi(argv[8]);
   } else {
     seed = 0;
     no_seed = true;
   }
 
-  return testNEST(detector, numEvts, type, eMin, eMax, inField, position, posiMuon, fPos,
+  return testNEST(detector, numEvts, type, eMin, eMax, inField, position, posiMuon, fPos, output_root_file,
                   seed, no_seed);
 }
 
 int testNEST(VDetector* detector, unsigned long int numEvts, string type,
              double eMin, double eMax, double inField, string position, string posiMuon,
-             double fPos, int seed, bool no_seed) {
+             double fPos, string output_root_file ,int seed, bool no_seed) {
   // Construct NEST class using detector object
   NESTcalc n(detector);
 
@@ -216,6 +221,12 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
       (20.8 - 1.9896) /
           (1. + pow(rho / 4.0434,
                     1.4407));  // out-of-sync danger: copied from NEST.cpp
+
+  char name[200];
+  sprintf(name,"%s",output_root_file.c_str());
+  TFile* out_file = new TFile(name,"RECREATE");
+  TTree* out_tree = new TTree("mc_tree","MC output tree");
+
 
   // Calculate and print g1, g2 parameters (once per detector)
   vector<double> g2_params = n.CalculateG2(verbosity);
@@ -654,6 +665,11 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
              quanta.electrons);  // comment this out when below line in
       // printf("%.6f\t%.6f\t%.6f\t%.0f, %.0f,%.0f\t%lf\t%lf\t",keV,field,driftTime,smearPos[0],smearPos[1],smearPos[2],yields.PhotonYield,yields.ElectronYield);
       // //for when you want means
+	  //
+	  ////////////////
+	  // write Kr83m yields to mc_tree
+	  //
+	  ///////////////
       if (truthPos[2] < detector->get_cathode() && verbosity) printf("g-X ");
       if (keV > 1000. || scint[5] > maxS1 || scint2[7] > maxS2 ||
           // switch to exponential notation to make output more readable, if
