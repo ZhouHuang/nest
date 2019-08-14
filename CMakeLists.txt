@@ -8,7 +8,7 @@ project(NEST)
 
 # Optional GEANT4 integration and ROOT compilation
 option(G4 "Build integration with Geant4" OFF)
-option(BUILD_ROOT "Build ROOT tools" OFF)
+option(BUILD_ROOT "Build ROOT tools" ON)
 
 # If the install directory not specified, use the build directory
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -83,7 +83,7 @@ if(BUILD_ROOT)
 	include_directories(${ROOT_INCLUDE_DIRS})
 	add_executable(rootNEST ${PROJECT_SOURCE_DIR}/Tools/rootNEST.cpp)
 	target_link_libraries(rootNEST NEST_core ${ROOT_LIBRARIES})
-#	target_link_libraries(testNEST_core ${ROOT_LIBRARIES})
+	target_link_libraries(testNEST NEST_core ${ROOT_LIBRARIES})
 	install(TARGETS NEST testNEST bareNEST rootNEST
 		# IMPORTANT: Add the library to the "export-set"
 		EXPORT NESTTargets
