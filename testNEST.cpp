@@ -101,6 +101,40 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
   double g2, pos_x, pos_y, pos_z, r, phi, driftTime, field, vD,
       vD_middle = 0., atomNum = 0, massNum = 0, keVee = 0.0;
   YieldResult yieldsMax;
+	// ////////////////
+	// Branch variable definition
+	//
+  char name[200];
+  sprintf(name,"/home/huangzhou/quanta_nest2/data/%s",output_root_file.c_str());
+  TFile* out_file = new TFile(name,"RECREATE");
+  TTree* out_tree = new TTree("mc_tree","MC output tree");
+	float deltaT(0.);
+	float energy(0.);
+	//float field(0.); // defined in the begining
+	//float driftTime(0.);
+	float x_smeard(0.);
+	float y_smeard(0.);
+	float z_smeard(0.);
+	int nph(0);
+	int ne(0);
+	float S1raw(0.);
+	float S1(0.);
+	float S2raw(0.);
+	float S2(0.);
+	out_tree->Branch("deltaT",&deltaT,"deltaT/F");
+	out_tree->Branch("energy",&energy,"energy/F");
+	out_tree->Branch("field",&field,"field/F");
+	out_tree->Branch("driftTime",&driftTime,"driftTime/F");
+	out_tree->Branch("x_smeard",&x_smeard,"x_smeard/F");
+	out_tree->Branch("y_smeard",&y_smeard,"y_smeard/F");
+	out_tree->Branch("z_smeard",&z_smeard,"z_smeard/F");
+	out_tree->Branch("nph",&nph,"nph/I");
+	out_tree->Branch("ne",&ne,"ne/I");
+	out_tree->Branch("S1raw",&S1raw,"S1raw/F");
+	out_tree->Branch("S1",&S1,"S1/F");
+	out_tree->Branch("S2raw",&S2raw,"S2raw/F");
+	out_tree->Branch("S2",&S2,"S2/F");
+	//////////////////////////////////////////////
 
   if (no_seed != true) {
     if (seed == -1) {
@@ -222,10 +256,6 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
           (1. + pow(rho / 4.0434,
                     1.4407));  // out-of-sync danger: copied from NEST.cpp
 
-  char name[200];
-  sprintf(name,"%s",output_root_file.c_str());
-  TFile* out_file = new TFile(name,"RECREATE");
-  TTree* out_tree = new TTree("mc_tree","MC output tree");
 
 
   // Calculate and print g1, g2 parameters (once per detector)
@@ -651,7 +681,9 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
     // adjusted for 2-PE effect (LUX phd units)
     // scint2[8] = g2; // g2 = ExtEff * SE, light collection efficiency of EL in
     // gas gap (from CalculateG2)
-
+	//
+	//
+	//
     if (1) {  // fabs(scint[7]) > PHE_MIN && fabs(scint2[7]) > PHE_MIN ) { //if
       // you want to skip specific sub-threshold events, comment in this
       // if statement (save screen/disk space)
@@ -659,17 +691,23 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
       // on analysis.hh settings (think of as analysis v. trigger thresholds)
       // and using max's too, pinching both ends
       if (type_num == Kr83m && eMin == 9.4 && eMax == 9.4)
-        printf("%.6f\t", yields.DeltaT_Scint);
+	  {
+			  printf("%.6f\t", yields.DeltaT_Scint);
+			  deltaT = yields.DeltaT_Scint;
+	  }
+
       printf("%.6f\t%.6f\t%.6f\t%.0f, %.0f, %.0f\t%d\t%d\t", keV, field,
              driftTime, smearPos[0], smearPos[1], smearPos[2], quanta.photons,
-             quanta.electrons);  // comment this out when below line in
+             quanta.electrons);  
+	  energy = keV;
+	  x_smeard = smearPos[0];
+	  y_smeard = smearPos[1];
+	  z_smeard = smearPos[2];
+	  nph = quanta.photons;
+	  ne = quanta.electrons;
+	  // comment this out when below line in
       // printf("%.6f\t%.6f\t%.6f\t%.0f, %.0f,%.0f\t%lf\t%lf\t",keV,field,driftTime,smearPos[0],smearPos[1],smearPos[2],yields.PhotonYield,yields.ElectronYield);
       // //for when you want means
-	  //
-	  ////////////////
-	  // write Kr83m yields to mc_tree
-	  //
-	  ///////////////
       if (truthPos[2] < detector->get_cathode() && verbosity) printf("g-X ");
       if (keV > 1000. || scint[5] > maxS1 || scint2[7] > maxS2 ||
           // switch to exponential notation to make output more readable, if
@@ -688,9 +726,21 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
                             // of all 8 scint2 vector elements. Change as you
                             // desire
       }
+	  S1raw = scint[2];
+	  S1 = scint[5];
+	  S2raw = scint2[4];
+	  S2 = scint2[7];
     }  // always execute statement, if(1) above, because if is just place-holder
        // in case you want to drop all sub-threshold data
+	  //
+	  ////////////////
+	  // write Kr83m yields to mc_tree
+	  out_tree->Fill();
+	  cout<<" fill one entry----------"<<endl;
+	  ///////////////
   }
+	out_tree->Write();
+	out_file->Close();
 
   if (verbosity) {
     if (eMin != eMax) {
