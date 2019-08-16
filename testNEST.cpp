@@ -111,7 +111,9 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	float deltaT(0.);
 	float energy(0.);
 	//float field(0.); // defined in the begining
+	float FE(0.);
 	//float driftTime(0.);
+	float dt(0.);
 	float x_smeard(0.);
 	float y_smeard(0.);
 	float z_smeard(0.);
@@ -123,8 +125,8 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	float S2(0.);
 	out_tree->Branch("deltaT",&deltaT,"deltaT/F");
 	out_tree->Branch("energy",&energy,"energy/F");
-	out_tree->Branch("field",&field,"field/F");
-	out_tree->Branch("driftTime",&driftTime,"driftTime/F");
+	out_tree->Branch("FE",&FE,"FE/F");
+	out_tree->Branch("dt",&dt,"dt/F");
 	out_tree->Branch("x_smeard",&x_smeard,"x_smeard/F");
 	out_tree->Branch("y_smeard",&y_smeard,"y_smeard/F");
 	out_tree->Branch("z_smeard",&z_smeard,"z_smeard/F");
@@ -700,6 +702,9 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
              driftTime, smearPos[0], smearPos[1], smearPos[2], quanta.photons,
              quanta.electrons);  
 	  energy = keV;
+	  FE = field;
+	  cout<<"COMPARE : field = "<<field<<"  |  FE = "<<FE<<endl;
+	  dt = driftTime;
 	  x_smeard = smearPos[0];
 	  y_smeard = smearPos[1];
 	  z_smeard = smearPos[2];
@@ -736,7 +741,6 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	  ////////////////
 	  // write Kr83m yields to mc_tree
 	  out_tree->Fill();
-	  cout<<" fill one entry----------"<<endl;
 	  ///////////////
   }
 	out_tree->Write();
