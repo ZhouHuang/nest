@@ -105,7 +105,7 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	// Branch variable definition
 	//
   char name[200];
-  sprintf(name,"/home/huangzhou/quanta_nest2/data/%s",output_root_file.c_str());
+  sprintf(name,"%s",output_root_file.c_str());
   TFile* out_file = new TFile(name,"RECREATE");
   TTree* out_tree = new TTree("mc_tree","MC output tree");
 	float deltaT(0.);
@@ -123,6 +123,8 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	float S1(0.);
 	float S2raw(0.);
 	float S2(0.);
+	float photonYield(0.);
+	float electronYield(0.);
 	out_tree->Branch("deltaT",&deltaT,"deltaT/F");
 	out_tree->Branch("energy",&energy,"energy/F");
 	out_tree->Branch("FE",&FE,"FE/F");
@@ -136,6 +138,8 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
 	out_tree->Branch("S1",&S1,"S1/F");
 	out_tree->Branch("S2raw",&S2raw,"S2raw/F");
 	out_tree->Branch("S2",&S2,"S2/F");
+	out_tree->Branch("photonYield",&photonYield,"photonYield/F");
+	out_tree->Branch("electronYield",&electronYield,"electronYield/F");
 	//////////////////////////////////////////////
 
   if (no_seed != true) {
@@ -703,13 +707,14 @@ int testNEST(VDetector* detector, unsigned long int numEvts, string type,
              quanta.electrons);  
 	  energy = keV;
 	  FE = field;
-	  cout<<"COMPARE : field = "<<field<<"  |  FE = "<<FE<<endl;
 	  dt = driftTime;
 	  x_smeard = smearPos[0];
 	  y_smeard = smearPos[1];
 	  z_smeard = smearPos[2];
 	  nph = quanta.photons;
 	  ne = quanta.electrons;
+	  photonYield = yields.PhotonYield;
+	  electronYield = yields.ElectronYield;
 	  // comment this out when below line in
       // printf("%.6f\t%.6f\t%.6f\t%.0f, %.0f,%.0f\t%lf\t%lf\t",keV,field,driftTime,smearPos[0],smearPos[1],smearPos[2],yields.PhotonYield,yields.ElectronYield);
       // //for when you want means
