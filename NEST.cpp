@@ -1053,6 +1053,9 @@ vector<double> NESTcalc::CalculateG2(bool verbosity) {
                                                   // the gas gap
   if (fdetector->get_s2_thr() < 0)
     SE *= fdetector->FitTBA(0., 0., fdetector->get_TopDrift() / 2.)[1];
+
+  SE = 23.9;
+  ExtEff = 0.5769;
   double g2 = ExtEff * SE;
   double StdDev = sqrt((1. - fdetector->get_g1_gas()) * SE +
                        fdetector->get_s2Fano() * fdetector->get_s2Fano() +

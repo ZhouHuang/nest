@@ -34,16 +34,16 @@ class DetectorExample_XENON10 : public VDetector {
   // function of time
   virtual void Initialization() {
     // Primary Scintillation (S1) parameters
-    g1 = 0.073;  // phd per S1 phot at dtCntr (not phe). Divide out 2-PE effect
+    g1 = 0.092571;  // phd per S1 phot at dtCntr (not phe). Divide out 2-PE effect
     sPEres = 0.58;   // single phe resolution (Gaussian assumed)
     sPEthr = 0.35;   // POD threshold in phe, usually used IN PLACE of sPEeff
     sPEeff = 1.00;   // actual efficiency, can be used in lieu of POD threshold
     noise[0] = 0.0;  // baseline noise mean and width in PE (Gaussian)
     noise[1] = 0.0;  // baseline noise mean and width in PE (Gaussian)
-    P_dphe = 0.2;  // chance 1 photon makes 2 phe instead of 1 in Hamamatsu PMT
+    P_dphe = 0.225;  // chance 1 photon makes 2 phe instead of 1 in Hamamatsu PMT
 
     coinWind = 100;  // S1 coincidence window in ns
-    coinLevel = 2;   // how many PMTs have to fire for an S1 to count
+    coinLevel = 3;   // how many PMTs have to fire for an S1 to count
     numPMTs = 89;    // For coincidence calculation
 
     //"Linear noise" terms as defined in Dahl thesis and by D. McK
@@ -54,7 +54,7 @@ class DetectorExample_XENON10 : public VDetector {
     g1_gas = .0655;  // phd per S2 photon in gas, used to get SE size
     s2Fano = 3.61;   // Fano-like fudge factor for SE width
     s2_thr = 300.;  // the S2 threshold in phe or PE, *not* phd. Affects NR most
-    E_gas = 12.;    // field in kV/cm between liquid/gas border and anode
+    E_gas = 4.92;    // field in kV/cm between liquid/gas border and anode
     eLife_us = 2200.;  // the drift electron mean lifetime in micro-seconds
 
     // Thermodynamic Properties
