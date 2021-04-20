@@ -17,7 +17,7 @@ matrix:
 # Email notifications
 notifications:
   email:
-    - christopher.douglas.tunnell@gmail.com
+    - matthew.szydagis@gmail.com
 
 # Commands to install
 install:
@@ -31,4 +31,4 @@ install:
 # Test commands
 script:
   - ls
-  - ./testNEST 100 WIMP 100 1e-40 10 100,100,100 42
+  - ./bin/execNEST 100 WIMP 100 1e-40 10 100,100,100 42
